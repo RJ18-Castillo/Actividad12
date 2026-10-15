@@ -2,17 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-
-class Estudiante extends Model
+// No aparece en la foto: se deduce de new Estudiante('B12345').
+// El nombre del parámetro ($carne) es una suposición; ajústelo al del diagrama.
+class Estudiante
 {
-    protected $fillable = ['nombre'];
-
-    public function grupos(): BelongsToMany
-    {
-        return $this->belongsToMany(Grupo::class, 'matriculas')
-            ->using(Matricula::class)
-            ->withPivot('fecha', 'nota_final');
-    }
+    public function __construct(private string $carne) {}
 }

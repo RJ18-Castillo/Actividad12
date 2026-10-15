@@ -2,31 +2,31 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use App\Exceptions\GrupoLleno;
+use DateTimeImmutable;
 
-class Grupo extends Model
+class Grupo
 {
-    protected $table = 'grupos';
+    private array $matriculas = [];
 
-    protected $fillable = ['curso_id', 'docente_id', 'numero', 'cupo'];
+    public function __construct(
+        private Curso $curso,
+        private int $numero,
+        private int $cupo,
+        private Docente $docente
+    ) {}
 
-    public function curso(): BelongsTo
+    public function matricular(Estudiante $e, DateTimeImmutable $f): Matricula
     {
-        return $this->belongsTo(Curso::class);
+        if (count($this->matriculas) >= $this->cupo) {
+            throw new GrupoLleno();
+        }
+
+        return $this->matriculas[] = new Matricula($e, $this, $f);
     }
 
-    // Asociación unidireccional: Grupo -> Docente.
-    public function docente(): BelongsTo
+    public function matriculas(): array
     {
-        return $this->belongsTo(Docente::class);
-    }
-
-    public function estudiantes(): BelongsToMany
-    {
-        return $this->belongsToMany(Estudiante::class, 'matriculas')
-            ->using(Matricula::class)
-            ->withPivot('fecha', 'nota_final');
+        return $this->matriculas;
     }
 }

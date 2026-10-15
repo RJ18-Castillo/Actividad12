@@ -2,16 +2,18 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-
-class Curso extends Model
+class Curso
 {
-    protected $fillable = ['codigo', 'nombre'];
+    private array $grupos = [];
 
-    // Composición: el curso es el "todo" y posee sus grupos.
-    public function grupos(): HasMany
+    public function __construct(private string $codigo, private string $nombre) {}
+
+    // Composición: el curso crea sus grupos
+    public function abrirGrupo(int $numero, int $cupo, Docente $d): Grupo
     {
-        return $this->hasMany(Grupo::class);
+        $g = new Grupo($this, $numero, $cupo, $d);
+        $this->grupos[] = $g;
+
+        return $g;
     }
 }

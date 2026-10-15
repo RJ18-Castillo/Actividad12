@@ -2,12 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-
-class Docente extends Model
+// No aparece en la foto: se deduce de new Docente('D. Solis').
+class Docente
 {
-    protected $fillable = ['nombre'];
-
-    // Intencionalmente SIN relación grupos(): la asociación Grupo -> Docente
-    // es unidireccional (al docente no le interesa saber qué grupos tiene).
+    public function __construct(private string $nombre) {}
 }
